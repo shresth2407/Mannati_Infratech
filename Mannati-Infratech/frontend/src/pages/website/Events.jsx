@@ -33,7 +33,7 @@ const Events = () => {
       const a = document.createElement("a");
 
       a.href = downloadUrl;
-      a.download = "event-image.jpg"; // default filename
+      a.download = "event-image.jpg";
       document.body.appendChild(a);
       a.click();
 
@@ -52,9 +52,7 @@ const Events = () => {
       {/* 🎨 HERO SECTION */}
       <section className="events-hero">
         <h1>Our Events & Gallery</h1>
-        <p>
-          Premium moments from our construction & infrastructure projects
-        </p>
+        <p>Explore our latest projects and event highlights</p>
       </section>
 
       {/* 🖼️ GALLERY SECTION */}
@@ -72,9 +70,15 @@ const Events = () => {
               className="gallery-card premium"
               onClick={() => setSelectedImage(img)}
             >
-              <img src={img.imageUrl} alt={img.title} />
+              <img
+                src={img.imageUrl}
+                alt={img.title}
+                style={{ cursor: "pointer" }}
+              />
+
+              {/* 🎭 OVERLAY */}
               <div className="gallery-overlay">
-                <span>View Image</span>
+                <span>Click to View</span>
               </div>
             </div>
           ))}
@@ -96,14 +100,16 @@ const Events = () => {
             alt={selectedImage.title}
           />
 
-          <button
-            className="download-btn"
-            onClick={() =>
-              handleDownload(selectedImage.imageUrl)
-            }
-          >
-            ⬇ Download Image
-          </button>
+          <div className="modal-actions">
+            <button
+              className="download-btn"
+              onClick={() =>
+                handleDownload(selectedImage.imageUrl)
+              }
+            >
+              ⬇ Download Image
+            </button>
+          </div>
         </div>
       )}
     </>

@@ -1,0 +1,182 @@
+/* =====================
+   HERO
+===================== */
+.about-hero {
+  height: 70vh;
+  background: linear-gradient(
+    135deg,
+    #1f3c88,
+    #4fc3f7
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+.about-hero-content {
+  max-width: 700px;
+  padding: 20px;
+}
+
+.about-hero h1 {
+  font-size: 46px;
+  margin-bottom: 14px;
+}
+
+.about-hero p {
+  font-size: 18px;
+  opacity: 0.95;
+}
+
+/* =====================
+   SECTIONS
+===================== */
+.about-section {
+  background: #f4f7fb;
+  padding: 90px 20px;
+  text-align: center;
+}
+
+.about-section h2 {
+  font-size: 34px;
+  color: #1f3c88;
+  margin-bottom: 18px;
+}
+
+.about-section p {
+  max-width: 850px;
+  margin: auto;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #444;
+}
+
+/* =====================
+   MISSION & VISION
+===================== */
+.mission-vision {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 90px 20px;
+}
+
+.mv-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s ease;
+}
+
+.mv-card h3 {
+  color: #1f3c88;
+  margin-bottom: 12px;
+}
+
+.mv-card p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* =====================
+   STATS
+===================== */
+.about-stats {
+  background: linear-gradient(
+    135deg,
+    #0f2027,
+    #203a43,
+    #2c5364
+  );
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 80px 20px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.stat-card h2 {
+  font-size: 40px;
+  margin-bottom: 6px;
+  color: #4fc3f7;
+}
+
+.stat-card p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* =====================
+   CTA
+===================== */
+.about-cta {
+  background: #ffffff;
+  padding: 90px 20px;
+  text-align: center;
+}
+
+.about-cta h2 {
+  font-size: 34px;
+  color: #1f3c88;
+  margin-bottom: 12px;
+}
+
+.about-cta p {
+  font-size: 17px;
+  color: #555;
+}
+
+/* =====================
+   ANIMATIONS
+===================== */
+.animate-slide {
+  animation: slideUp 1.2s ease forwards;
+}
+
+.fade-in {
+  animation: fadeIn 1.4s ease forwards;
+}
+
+.hover-up:hover {
+  transform: translateY(-10px);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 32px;
+  }
+
+  .about-section h2,
+  .about-cta h2 {
+    font-size: 26px;
+  }
+}

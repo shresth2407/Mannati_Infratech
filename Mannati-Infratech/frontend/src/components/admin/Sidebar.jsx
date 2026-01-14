@@ -12,7 +12,6 @@ const Sidebar = () => {
         <NavLink to="/admin/dashboard">Dashboard</NavLink>
         <NavLink to="/admin/gallery">Gallery</NavLink>
         <NavLink to="/admin/enquiries">Enquiries</NavLink>
-        <NavLink to="/admin/categories">Categories</NavLink>
       </nav>
     </aside>
   );

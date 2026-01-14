@@ -8,7 +8,7 @@ const app = express();
 
 /* =========================
    GLOBAL MIDDLEWARES
-   ⚠️ ORDER MATTERS
+   ✅ ORDER FIXED
 ========================= */
 app.use(cors());
 app.use(express.json());
@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require("./routes/authRoutes");
 const enquiryRoutes = require("./routes/enquiryRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
-const categoryRoutes = require("./routes/categoryRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+const adminRoutes = require("./routes/admin.routes");
+const chatRoutes = require("./routes/chatRoutes");
 
 /* =========================
    ROUTES REGISTER
@@ -29,8 +29,8 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/enquiries", enquiryRoutes);
 app.use("/api/gallery", galleryRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/chat", chatRoutes);
 
 /* =========================
    TEST / HEALTH ROUTE

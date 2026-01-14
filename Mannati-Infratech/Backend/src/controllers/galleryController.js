@@ -1,168 +1,143 @@
+const fs = require("fs");
 const Gallery = require("../models/Gallery");
-const cloudinary = require("../config/cloudinary");
+const { uploadToCloudinary, cloudinary } = require("../config/cloudinary");
 
 /**
- * @desc    Upload gallery image
- * @route   POST /api/gallery
- * @access  Admin
+ * 📤 ADMIN – Upload Gallery (Multiple Images + Videos)
+ * POST /api/gallery
  */
-const uploadGalleryImage = async (req, res) => {
+const uploadGallery = async (req, res) => {
   try {
-    const { title, category } = req.body;
+    const { title, category, status } = req.body;
 
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "No image uploaded",
-      });
+    if (!title) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Title is required" });
     }
 
-    const image = await Gallery.create({
-      title: title || "Gallery Image",
-      category: category || null,
-      imageUrl: req.file.path,
-      publicId: req.file.filename,
-      status: "published", // default
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No files uploaded" });
+    }
+
+    const files = [];
+
+    for (const file of req.files) {
+      const isVideo = file.mimetype.startsWith("video");
+      const type = isVideo ? "video" : "image";
+
+      const result = await uploadToCloudinary(file.path, type);
+
+      files.push({
+        type,
+        fileUrl: result.secure_url,
+        publicId: result.public_id,
+        format: result.format,
+        bytes: result.bytes,
+      });
+
+      // 🧹 remove temp file
+      fs.unlinkSync(file.path);
+    }
+
+    const gallery = await Gallery.create({
+      title,
+      category,
+      status: status || "draft",
+      files,
     });
 
     res.status(201).json({
       success: true,
-      image,
+      message: "Gallery uploaded successfully",
+      gallery,
     });
   } catch (error) {
-    console.error("Upload error:", error.message);
+    console.error("Gallery upload error:", error);
     res.status(500).json({
       success: false,
-      message: "Upload failed",
+      message: "Gallery upload failed",
     });
   }
 };
 
 /**
- * @desc    Get all gallery images (Admin)
- * @route   GET /api/gallery/admin
- * @access  Admin
+ * 🔐 ADMIN – Get all gallery items
  */
 const getAdminGallery = async (req, res) => {
   try {
-    const images = await Gallery.find()
-      .populate("category", "name")
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      images,
-    });
-  } catch (error) {
-    console.error("Admin gallery error:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    const galleries = await Gallery.find().sort({ createdAt: -1 });
+    res.json({ success: true, galleries });
+  } catch {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 /**
- * @desc    Get published gallery images (Public)
- * @route   GET /api/gallery
- * @access  Public
+ * 🌐 PUBLIC – Get published gallery
  */
-const getPublishedGallery = async (req, res) => {
+const getPublicGallery = async (req, res) => {
   try {
-    const images = await Gallery.find({ status: "published" })
-      .populate("category", "name")
-      .sort({ createdAt: -1 });
+    const galleries = await Gallery.find({ status: "published" }).sort({
+      createdAt: -1,
+    });
 
-    res.json({
-      success: true,
-      images,
-    });
-  } catch (error) {
-    console.error("Public gallery error:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    res.json({ success: true, galleries });
+  } catch {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 /**
- * @desc    Update gallery image (title / category / status)
- * @route   PUT /api/gallery/:id
- * @access  Admin
+ * ✏️ ADMIN – Update gallery meta
  */
 const updateGallery = async (req, res) => {
   try {
-    const { title, category, status } = req.body;
+    const updated = await Gallery.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-    const image = await Gallery.findById(req.params.id);
-
-    if (!image) {
-      return res.status(404).json({
-        success: false,
-        message: "Image not found",
-      });
-    }
-
-    // 🔥 SAFE PARTIAL UPDATE
-    if (title !== undefined) image.title = title;
-    if (category !== undefined) image.category = category;
-    if (status !== undefined) image.status = status;
-
-    await image.save();
-
-    res.json({
-      success: true,
-      image,
-    });
-  } catch (error) {
-    console.error("Update gallery error:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Update failed",
-    });
+    res.json({ success: true, gallery: updated });
+  } catch {
+    res.status(500).json({ success: false, message: "Update failed" });
   }
 };
 
 /**
- * @desc    Delete gallery image (Cloudinary + DB)
- * @route   DELETE /api/gallery/:id
- * @access  Admin
+ * 🗑 ADMIN – Delete gallery (DB + Cloudinary)
  */
 const deleteGallery = async (req, res) => {
   try {
-    const image = await Gallery.findById(req.params.id);
+    const gallery = await Gallery.findById(req.params.id);
 
-    if (!image) {
-      return res.status(404).json({
-        success: false,
-        message: "Image not found",
+    if (!gallery) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Gallery not found" });
+    }
+
+    for (const file of gallery.files) {
+      await cloudinary.uploader.destroy(file.publicId, {
+        resource_type: file.type,
       });
     }
 
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(image.publicId);
+    await gallery.deleteOne();
 
-    // Delete from DB
-    await image.deleteOne();
-
-    res.json({
-      success: true,
-      message: "Image deleted successfully",
-    });
-  } catch (error) {
-    console.error("Delete gallery error:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Delete failed",
-    });
+    res.json({ success: true, message: "Gallery deleted successfully" });
+  } catch {
+    res.status(500).json({ success: false, message: "Delete failed" });
   }
 };
 
 module.exports = {
-  uploadGalleryImage,
+  uploadGallery,
   getAdminGallery,
-  getPublishedGallery,
+  getPublicGallery,
   updateGallery,
   deleteGallery,
 };

@@ -1,49 +1,46 @@
 const Enquiry = require("../models/Enquiry");
 const Gallery = require("../models/Gallery");
 
-/**
- * @desc    Get dashboard statistics (Admin)
- * @route   GET /api/dashboard/stats
- * @access  Private (Admin)
- */
 const getDashboardStats = async (req, res) => {
   try {
-    // 🔵 Enquiries
+    // 📨 ENQUIRIES
     const totalEnquiries = await Enquiry.countDocuments();
-    const pendingEnquiries = await Enquiry.countDocuments({ status: "New" });
-    const resolvedEnquiries = await Enquiry.countDocuments({
-      status: { $in: ["Contacted", "Closed"] },
+
+    const pendingEnquiries = await Enquiry.countDocuments({
+      status: { $in: ["new", "pending", "New"] },
     });
 
-    // 🖼️ Gallery
-    const totalGalleryImages = await Gallery.countDocuments();
+    // 🖼 GALLERY
+    const totalGalleryItems = await Gallery.countDocuments();
 
-    // 🟢 Projects (future-ready placeholders)
-    const totalProjects = 0;
-    const activeProjects = 0;
-    const completedProjects = 0;
+    const publishedItems = await Gallery.countDocuments({
+      status: { $in: ["published", "active"] },
+    });
 
-    return res.status(200).json({
+    const images = await Gallery.countDocuments({
+      type: { $in: ["image", "Image"] },
+    });
+
+    const videos = await Gallery.countDocuments({
+      type: { $in: ["video", "Video"] },
+    });
+
+    res.status(200).json({
       success: true,
       stats: {
-        enquiries: {
-          total: totalEnquiries,
-          pending: pendingEnquiries,
-          resolved: resolvedEnquiries,
-        },
-        gallery: totalGalleryImages,
-        projects: {
-          total: totalProjects,
-          active: activeProjects,
-          completed: completedProjects,
-        },
+        totalEnquiries,
+        pendingEnquiries,
+        totalGalleryItems,
+        publishedItems,
+        images,
+        videos,
       },
     });
   } catch (error) {
-    console.error("Dashboard stats error:", error.message);
-    return res.status(500).json({
+    console.error("Dashboard stats error:", error);
+    res.status(500).json({
       success: false,
-      message: "Dashboard stats fetch failed",
+      message: "Dashboard stats failed",
     });
   }
 };

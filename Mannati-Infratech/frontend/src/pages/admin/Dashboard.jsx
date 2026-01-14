@@ -1,26 +1,68 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 import { getDashboardStats } from "../../api/api";
 import "../../components/admin/admin.css";
 
 const Dashboard = () => {
-  const { token } = useAuth();
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    enquiries: {
+      total: 0,
+      pending: 0,
+      resolved: 0,
+    },
+    gallery: 0,
+    projects: {
+      total: 0,
+      active: 0,
+      completed: 0,
+    },
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    let intervalId;
+
     const loadStats = async () => {
       try {
-        const data = await getDashboardStats(token);
-        setStats(data);
+        const data = await getDashboardStats();
+
+        // ✅ SAFE + REAL DATA MAPPING
+        setStats({
+          enquiries: {
+            total: data?.enquiries?.total ?? data?.enquiries ?? 0,
+            pending: data?.enquiries?.pending ?? 0,
+            resolved: data?.enquiries?.resolved ?? 0,
+          },
+          gallery: data?.gallery ?? 0,
+          projects: {
+            total: data?.projects?.total ?? 0,
+            active: data?.projects?.active ?? 0,
+            completed: data?.projects?.completed ?? 0,
+          },
+        });
+
+        setError("");
       } catch (err) {
-        console.log("DASHBOARD TOKEN:", token);
-        console.error(err.message);
+        console.error("Dashboard error:", err);
+        setError("Failed to load dashboard");
+      } finally {
+        setLoading(false);
       }
     };
-    loadStats();
-  }, [token]);
 
-  if (!stats) return <p className="loading-text">Loading dashboard...</p>;
+    // 🔹 Initial load
+    loadStats();
+
+    // 🔁 REAL-TIME REFRESH (every 5 seconds)
+    intervalId = setInterval(loadStats, 5000);
+
+    // 🧹 Cleanup
+    return () => clearInterval(intervalId);
+  }, []);
+
+  if (loading) return <p className="loading-text">Loading dashboard...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
     <div className="admin-page">

@@ -1,6 +1,6 @@
 import Navbar from "../../components/website/Navbar";
 import Footer from "../../components/website/Footer";
-import "../../components/website/website.css";
+import "./home.css";
 
 const Home = () => {
   return (
@@ -9,50 +9,64 @@ const Home = () => {
 
       {/* HERO SECTION */}
       <section className="hero">
-        <div className="hero-text">
-          <h1>Building Strong Infrastructure for Tomorrow</h1>
+        <div className="hero-content animate-slide">
+          <h1>
+            Building <span>Modern Infrastructure</span>
+          </h1>
+
           <p>
-            Mannati Infratech is committed to delivering high-quality
-            infrastructure projects with trust, innovation, and excellence.
+            Mannati Infratech delivers reliable construction, infrastructure
+            development, and project execution with quality and trust.
           </p>
-          <a href="/contact" className="hero-btn">
-            Get in Touch
-          </a>
+
+          {/* 🔥 HERO BUTTONS (FULLY WORKING) */}
+          <div className="hero-buttons">
+            <a href="/projects" className="btn primary glow">
+              View Projects
+            </a>
+
+            <a href="/contact" className="btn secondary">
+              Contact Us
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* HIGHLIGHTS */}
-      <section className="highlights">
-        <h2>Why Choose Mannati Infratech?</h2>
+      {/* ABOUT PREVIEW */}
+      <section className="about-preview fade-in">
+        <h2>Who We Are</h2>
+        <p>
+          Mannati Infratech is a growing infrastructure company focused on
+          construction excellence, timely delivery, and client satisfaction. We
+          work across residential, commercial, and industrial projects.
+        </p>
+      </section>
 
-        <div className="highlight-grid">
-          <div className="highlight-card">
-            <h3>Quality Construction</h3>
-            <p>
-              We follow industry best practices to deliver durable and
-              sustainable infrastructure solutions.
-            </p>
-          </div>
+      {/* SERVICES */}
+      <section className="services">
+        <h2 className="section-title">Our Expertise</h2>
 
-          <div className="highlight-card">
-            <h3>Experienced Team</h3>
+        <div className="services-grid">
+          <div className="service-card">
+            <h3>Construction</h3>
             <p>
-              Our skilled professionals ensure timely and efficient project
+              End-to-end construction services with premium materials and skilled
               execution.
             </p>
           </div>
 
-          <div className="highlight-card">
-            <h3>On-Time Delivery</h3>
+          <div className="service-card">
+            <h3>Infrastructure</h3>
             <p>
-              We respect deadlines and consistently deliver projects on time.
+              Roads, buildings, and infrastructure projects delivered using
+              modern standards.
             </p>
           </div>
 
-          <div className="highlight-card">
-            <h3>Client Satisfaction</h3>
+          <div className="service-card">
+            <h3>Project Management</h3>
             <p>
-              Building long-term relationships through transparency and trust.
+              Professional planning, monitoring, and on-time project delivery.
             </p>
           </div>
         </div>
@@ -60,9 +74,12 @@ const Home = () => {
 
       {/* CTA */}
       <section className="cta">
-        <h2>Have a Project in Mind?</h2>
-        <p>Let’s build something great together.</p>
-        <a href="/contact">Contact Us</a>
+        <h2>Let's Build the Future Together</h2>
+        <p>Contact us today to discuss your next project.</p>
+
+        <a href="/contact" className="btn primary">
+          Get In Touch
+        </a>
       </section>
 
       <Footer />

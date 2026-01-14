@@ -1,0 +1,320 @@
+.login-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  padding: 35px 30px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.company-name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f3c88;
+}
+
+.company-tagline {
+  margin-bottom: 25px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-card input {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #1f3c88;
+}
+
+.login-card button {
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1f3c88;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-card button:hover {
+  background: #162e6f;
+}
+
+.login-card button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+.error-msg {
+  background: #ffe5e5;
+  color: #c0392b;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.login-footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #888;
+}
+
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* LEFT PANEL */
+.auth-brand {
+  flex: 1;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-brand h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.auth-brand p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* RIGHT CARD */
+.auth-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  max-width: 420px;
+  margin: auto;
+}
+
+.auth-card h2 {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #1f3c88;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-card input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #1f3c88;
+}
+
+.auth-card button {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #1f3c88;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-card button:hover {
+  background: #162e6f;
+}
+
+.auth-links {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-links a {
+  color: #1f3c88;
+  text-decoration: none;
+}
+
+.error-msg {
+  background: #ffe5e5;
+  color: #c0392b;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+  
+/* PAGE BACKGROUND */
+.login-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* LOGIN CARD */
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  padding: 36px 32px;
+  border-radius: 14px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+/* ANIMATION */
+.animate-fade {
+  animation: fadeSlide 0.8s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* BRANDING */
+.company-name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f3c88;
+}
+
+.company-tagline {
+  margin: 6px 0 22px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* FORM */
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-card input {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #1f3c88;
+  box-shadow: 0 0 0 2px rgba(31, 60, 136, 0.12);
+}
+
+/* BUTTON */
+.login-card button {
+  margin-top: 6px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1f3c88;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background 0.2s ease;
+}
+
+.login-card button:hover {
+  background: #162e6f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(31, 60, 136, 0.35);
+}
+
+.login-card button:disabled {
+  background: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* LINKS */
+.login-links {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.login-links a {
+  color: #1f3c88;
+  text-decoration: none;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+/* ERROR */
+.error-msg {
+  background: #ffe5e5;
+  color: #c0392b;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* FOOTER */
+.login-footer {
+  margin-top: 22px;
+  font-size: 12px;
+  color: #888;
+}
+
+.success-msg {
+  background: #e6fffa;
+  color: #00695c;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}

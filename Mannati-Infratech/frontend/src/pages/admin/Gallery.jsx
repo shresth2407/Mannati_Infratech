@@ -1,158 +1,142 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 import {
+  uploadGalleryFiles,
   getAdminGallery,
-  updateGallery,
-  deleteGallery,
-  getCategories,
-  uploadGalleryImage,
-} from "../../api/api";
+  updateGalleryItem,
+  deleteGalleryItem,
+} from "../../api/api.js";
 import "../../components/admin/admin.css";
 
 const Gallery = () => {
-  const { token } = useAuth();
-
-  // upload states
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-
-  // data states
-  const [images, setImages] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [status, setStatus] = useState("draft");
+  const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const loadData = async () => {
-    const imgs = await getAdminGallery(token);
-    const cats = await getCategories();
-    setImages(imgs);
-    setCategories(cats);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  /* ======================
-     UPLOAD IMAGE
-  ====================== */
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!file) return alert("Please select an image");
-
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("title", title);
-    formData.append("category", category);
-
-    setLoading(true);
-    await uploadGalleryImage(formData, token);
-
-    setFile(null);
-    setTitle("");
-    setCategory("");
-    setLoading(false);
-
-    loadData();
-  };
-
-  /* ======================
-     TOGGLE PUBLISH
-  ====================== */
-  const togglePublish = async (img) => {
-    const newStatus =
-      img.status === "published" ? "unpublished" : "published";
-
-    await updateGallery(img._id, { status: newStatus }, token);
-
-    setImages((prev) =>
-      prev.map((i) =>
-        i._id === img._id ? { ...i, status: newStatus } : i
-      )
-    );
-  };
-
-  /* ======================
-     DELETE IMAGE
-  ====================== */
-  const handleDelete = async (id) => {
-    if (confirm("Delete image permanently?")) {
-      await deleteGallery(id, token);
-      loadData();
+  // 🔄 Load gallery
+  const loadGallery = async () => {
+    try {
+      const data = await getAdminGallery();
+      setGalleries(data || []);
+    } catch (err) {
+      console.error("Gallery load failed", err);
     }
   };
 
-  return (
-    <div className="admin-page">
-      <h2 className="admin-title">Gallery Management</h2>
+  useEffect(() => {
+    loadGallery();
+  }, []);
 
-      {/* ======================
-          UPLOAD FORM
-      ====================== */}
-      <form className="upload-form" onSubmit={handleUpload}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
+  // 📤 Upload gallery
+  const handleUpload = async () => {
+    if (!title || files.length === 0) {
+      alert("Title and files required");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("status", status);
+    files.forEach((file) => formData.append("files", file));
+
+    try {
+      setLoading(true);
+      await uploadGalleryFiles(formData);
+      setTitle("");
+      setFiles([]);
+      setStatus("draft");
+      loadGallery();
+    } catch (err) {
+      alert("Upload failed");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔁 Publish / Unpublish
+  const togglePublish = async (item) => {
+    await updateGalleryItem(item._id, {
+      status: item.status === "published" ? "draft" : "published",
+    });
+    loadGallery();
+  };
+
+  // 🗑 Delete
+  const removeGallery = async (id) => {
+    if (!window.confirm("Delete this gallery?")) return;
+    await deleteGalleryItem(id);
+    loadGallery();
+  };
+
+  return (
+    <div className="admin-content">
+      <h1>Gallery Management</h1>
+
+      {/* CREATE */}
+      <div className="card">
+        <h3>Create Gallery</h3>
 
         <input
           type="text"
-          placeholder="Image title"
+          placeholder="Gallery Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="">Select category</option>
-          {categories.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
+        <input
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          onChange={(e) => setFiles([...e.target.files])}
+        />
+
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
         </select>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Upload Image"}
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload"}
         </button>
-      </form>
+      </div>
 
-      {/* ======================
-          GALLERY GRID
-      ====================== */}
-      <div className="admin-gallery-grid">
-        {images.map((img) => (
-          <div className="admin-gallery-card" key={img._id}>
-            <img src={img.imageUrl} alt={img.title} />
+      {/* LIST */}
+      <div className="grid">
+        {galleries.map((item) => (
+          <div className="gallery-admin-card" key={item._id}>
+            <h4>{item.title}</h4>
 
-            <p className="status-badge">
-              Status: <b>{img.status}</b>
-            </p>
+            <div className="preview-grid">
+              {item.type === "image" ? (
+                <img src={item.fileUrl} alt="" />
+              ) : (
+                <video src={item.fileUrl} controls />
+              )}
+            </div>
 
-            <button
-              className={
-                img.status === "published"
-                  ? "btn-warning"
-                  : "btn-success"
-              }
-              onClick={() => togglePublish(img)}
-            >
-              {img.status === "published"
-                ? "Unpublish"
-                : "Publish"}
-            </button>
+            <div className="meta">
+              <p><b>Status:</b> {item.status}</p>
+            </div>
 
-            <button
-              className="danger"
-              onClick={() => handleDelete(img._id)}
-            >
-              Delete
-            </button>
+            <div className="actions">
+              <button onClick={() => togglePublish(item)}>
+                {item.status === "published" ? "Unpublish" : "Publish"}
+              </button>
+              <button
+                className="danger"
+                onClick={() => removeGallery(item._id)}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
+
+        {galleries.length === 0 && (
+          <p style={{ textAlign: "center" }}>No gallery items</p>
+        )}
       </div>
     </div>
   );
