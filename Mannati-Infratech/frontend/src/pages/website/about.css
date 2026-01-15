@@ -1,13 +1,22 @@
 /* =====================
-   HERO
+   ROOT COLORS
+===================== */
+:root {
+  --primary: #1f3c88;
+  --secondary: #4fc3f7;
+  --light-bg: #f4f7fb;
+  --dark-text: #1f2933;
+  --muted-text: #555;
+}
+
+/* =====================
+   HERO (ANIMATED)
 ===================== */
 .about-hero {
-  height: 70vh;
-  background: linear-gradient(
-    135deg,
-    #1f3c88,
-    #4fc3f7
-  );
+  height: 75vh;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,14 +24,39 @@
   text-align: center;
 }
 
+/* Floating shapes */
+.about-hero::before,
+.about-hero::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.about-hero::before {
+  top: 15%;
+  left: 10%;
+}
+
+.about-hero::after {
+  bottom: 20%;
+  right: 15%;
+  animation-delay: 3s;
+}
+
 .about-hero-content {
-  max-width: 700px;
-  padding: 20px;
+  position: relative;
+  max-width: 720px;
+  padding: 30px;
+  animation: slideFade 1.2s ease forwards;
 }
 
 .about-hero h1 {
-  font-size: 46px;
-  margin-bottom: 14px;
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 
 .about-hero p {
@@ -30,127 +64,17 @@
   opacity: 0.95;
 }
 
-/* =====================
-   SECTIONS
-===================== */
-.about-section {
-  background: #f4f7fb;
-  padding: 90px 20px;
-  text-align: center;
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-25px); }
+  100% { transform: translateY(0); }
 }
 
-.about-section h2 {
-  font-size: 34px;
-  color: #1f3c88;
-  margin-bottom: 18px;
-}
-
-.about-section p {
-  max-width: 850px;
-  margin: auto;
-  font-size: 17px;
-  line-height: 1.7;
-  color: #444;
-}
-
-/* =====================
-   MISSION & VISION
-===================== */
-.mission-vision {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  max-width: 1100px;
-  margin: auto;
-  padding: 90px 20px;
-}
-
-.mv-card {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
-  transition: all 0.35s ease;
-}
-
-.mv-card h3 {
-  color: #1f3c88;
-  margin-bottom: 12px;
-}
-
-.mv-card p {
-  color: #555;
-  line-height: 1.6;
-}
-
-/* =====================
-   STATS
-===================== */
-.about-stats {
-  background: linear-gradient(
-    135deg,
-    #0f2027,
-    #203a43,
-    #2c5364
-  );
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
-  padding: 80px 20px;
-  color: #ffffff;
-  text-align: center;
-}
-
-.stat-card h2 {
-  font-size: 40px;
-  margin-bottom: 6px;
-  color: #4fc3f7;
-}
-
-.stat-card p {
-  font-size: 16px;
-  opacity: 0.9;
-}
-
-/* =====================
-   CTA
-===================== */
-.about-cta {
-  background: #ffffff;
-  padding: 90px 20px;
-  text-align: center;
-}
-
-.about-cta h2 {
-  font-size: 34px;
-  color: #1f3c88;
-  margin-bottom: 12px;
-}
-
-.about-cta p {
-  font-size: 17px;
-  color: #555;
-}
-
-/* =====================
-   ANIMATIONS
-===================== */
-.animate-slide {
-  animation: slideUp 1.2s ease forwards;
-}
-
-.fade-in {
-  animation: fadeIn 1.4s ease forwards;
-}
-
-.hover-up:hover {
-  transform: translateY(-10px);
-}
-
-@keyframes slideUp {
+@keyframes slideFade {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(35px);
   }
   to {
     opacity: 1;
@@ -158,12 +82,174 @@
   }
 }
 
-@keyframes fadeIn {
+/* =====================
+   COMPANY STORY
+===================== */
+.about-section {
+  background: var(--light-bg);
+  padding: 100px 20px;
+  text-align: center;
+  transition: background 0.4s ease;
+}
+
+.about-section:hover {
+  background: #eef3fb;
+}
+
+.about-section h2 {
+  font-size: 36px;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.about-section p {
+  max-width: 900px;
+  margin: auto;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--muted-text);
+}
+
+/* =====================
+   MISSION & VISION
+===================== */
+.mission-vision {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 100px 20px;
+}
+
+.mv-card {
+  background: #ffffff;
+  padding: 46px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mv-card::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, var(--secondary), transparent 70%);
+  opacity: 0.35;
+}
+
+.mv-card:hover {
+  transform: translateY(-14px);
+  box-shadow: 0 32px 80px rgba(31, 60, 136, 0.25);
+}
+
+.mv-card h3 {
+  color: var(--primary);
+  margin-bottom: 14px;
+  font-size: 22px;
+}
+
+.mv-card p {
+  color: var(--muted-text);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* =====================
+   STATS
+===================== */
+.about-stats {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  padding: 90px 20px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.stat-card {
+  animation: fadeUp 1.2s ease forwards;
+}
+
+.stat-card h2 {
+  font-size: 44px;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.stat-card p {
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+/* =====================
+   CTA
+===================== */
+.about-cta {
+  background: #ffffff;
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.about-cta h2 {
+  font-size: 36px;
+  color: var(--primary);
+  margin-bottom: 14px;
+}
+
+.about-cta p {
+  font-size: 17px;
+  color: var(--muted-text);
+  max-width: 800px;
+  margin: auto;
+  line-height: 1.8;
+}
+
+/* =====================
+   WHY CHOOSE US
+===================== */
+.why-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.why-card {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.why-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(31,60,136,0.2);
+}
+
+/* =====================
+   ANIMATIONS
+===================== */
+@keyframes fadeUp {
   from {
     opacity: 0;
+    transform: translateY(25px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -172,11 +258,15 @@
 ===================== */
 @media (max-width: 768px) {
   .about-hero h1 {
-    font-size: 32px;
+    font-size: 34px;
   }
 
   .about-section h2,
   .about-cta h2 {
-    font-size: 26px;
+    font-size: 28px;
+  }
+
+  .mv-card {
+    padding: 36px;
   }
 }

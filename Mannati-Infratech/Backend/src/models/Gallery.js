@@ -1,22 +1,25 @@
 const mongoose = require("mongoose");
 
-const fileSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    enum: ["image", "video"],
-    required: true,
+const fileSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["image", "video"],
+      required: true,
+    },
+    fileUrl: {
+      type: String,
+      required: true,
+    },
+    publicId: {
+      type: String,
+      required: true,
+    },
+    format: String,
+    bytes: Number,
   },
-  fileUrl: {
-    type: String,
-    required: true,
-  },
-  publicId: {
-    type: String,
-    required: true,
-  },
-  format: String,
-  bytes: Number,
-});
+  { _id: false }
+);
 
 const gallerySchema = new mongoose.Schema(
   {
@@ -26,17 +29,43 @@ const gallerySchema = new mongoose.Schema(
       trim: true,
     },
 
-    // optional (future use)
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     category: {
       type: String,
       lowercase: true,
       trim: true,
+      default: "events",
     },
 
-    // 🔥 MULTIPLE FILES
+    eventDate: {
+      type: Date,
+      default: null,
+    },
+
+    eventTime: {
+      type: String,
+      default: "",
+    },
+
+    location: {
+      type: String,
+      default: "",
+    },
+
+    featured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
     files: {
       type: [fileSchema],
-      required: true,
+      validate: [(v) => v.length > 0, "At least one file required"],
     },
 
     status: {
@@ -50,4 +79,5 @@ const gallerySchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Gallery", gallerySchema);
+module.exports =
+  mongoose.models.Gallery || mongoose.model("Gallery", gallerySchema);

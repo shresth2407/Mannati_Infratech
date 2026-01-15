@@ -10,13 +10,17 @@ import AdminLayout from "./layouts/AdminLayouts";
 import Dashboard from "./pages/admin/Dashboard";
 import Enquiries from "./pages/admin/Enquiries";
 import Gallery from "./pages/admin/Gallery";
+import AdminProjects from "./pages/admin/Projects";
 import Login from "./pages/admin/Login";
 import ResetPassword from "./pages/admin/ResetPassword";
+import ProtectedAdmin from "./components/admin/ProtectedAdmin";
+
 /* 🌐 PUBLIC WEBSITE */
 import Home from "./pages/website/Home";
 import About from "./pages/website/About";
 import Projects from "./pages/website/Projects";
 import Events from "./pages/website/Events";
+import EventDetail from "./pages/website/EventDetail";
 import Contact from "./pages/website/Contact";
 import ForgotPassword from "./pages/admin/ForgotPassword";
 const App = () => {
@@ -27,6 +31,7 @@ const App = () => {
       <Route path="/about" element={<About />} />
       <Route path="/projects" element={<Projects />} />
       <Route path="/events" element={<Events />} />
+      <Route path="/events/:id" element={<EventDetail />} />
       <Route path="/contact" element={<Contact />} />
 
       {/* 🔑 ADMIN LOGIN */}
@@ -36,6 +41,11 @@ const App = () => {
   path="/admin/reset-password/:token"
   element={<ResetPassword />}
 />
+<Route path="/admin/projects" element={
+  <ProtectedAdmin>
+    <AdminProjects />
+  </ProtectedAdmin>
+} />
 
       {/* 🔒 PROTECTED ADMIN ROUTES */}
       <Route element={<AdminRoute />}>

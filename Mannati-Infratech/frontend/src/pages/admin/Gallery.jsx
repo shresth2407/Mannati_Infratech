@@ -4,23 +4,30 @@ import {
   getAdminGallery,
   updateGalleryItem,
   deleteGalleryItem,
-} from "../../api/api.js";
-import "../../components/admin/admin.css";
+} from "../../api/api";
+import "./galleryAdmin.css";
 
 const Gallery = () => {
   const [files, setFiles] = useState([]);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("events");
   const [status, setStatus] = useState("draft");
+  const [featured, setFeatured] = useState(false);
+
+  const [eventDate, setEventDate] = useState("");
+  const [eventTime, setEventTime] = useState("");
+  const [location, setLocation] = useState("");
+
   const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔄 Load gallery
   const loadGallery = async () => {
     try {
-      const data = await getAdminGallery();
-      setGalleries(data || []);
+      const galleries = await getAdminGallery(); // 🔥 array directly
+      setGalleries(galleries);
     } catch (err) {
-      console.error("Gallery load failed", err);
+      console.error("Admin gallery load failed", err);
     }
   };
 
@@ -28,62 +35,75 @@ const Gallery = () => {
     loadGallery();
   }, []);
 
-  // 📤 Upload gallery
   const handleUpload = async () => {
     if (!title || files.length === 0) {
-      alert("Title and files required");
+      alert("Title & files required");
       return;
     }
 
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("description", description);
+    formData.append("category", category);
     formData.append("status", status);
-    files.forEach((file) => formData.append("files", file));
+    formData.append("featured", featured);
+    formData.append("eventDate", eventDate);
+    formData.append("eventTime", eventTime);
+    formData.append("location", location);
 
+    files.forEach((f) => formData.append("files", f));
+
+    setLoading(true);
     try {
-      setLoading(true);
       await uploadGalleryFiles(formData);
-      setTitle("");
       setFiles([]);
-      setStatus("draft");
+      setTitle("");
+      setDescription("");
+      setEventDate("");
+      setEventTime("");
+      setLocation("");
+      setFeatured(false);
       loadGallery();
     } catch (err) {
-      alert("Upload failed");
-      console.error(err);
+      alert(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔁 Publish / Unpublish
-  const togglePublish = async (item) => {
-    await updateGalleryItem(item._id, {
-      status: item.status === "published" ? "draft" : "published",
-    });
-    loadGallery();
-  };
-
-  // 🗑 Delete
-  const removeGallery = async (id) => {
-    if (!window.confirm("Delete this gallery?")) return;
-    await deleteGalleryItem(id);
-    loadGallery();
-  };
-
   return (
-    <div className="admin-content">
+    <div className="admin-gallery">
       <h1>Gallery Management</h1>
 
-      {/* CREATE */}
-      <div className="card">
-        <h3>Create Gallery</h3>
-
+      {/* UPLOAD */}
+      <div className="upload-card">
         <input
-          type="text"
-          placeholder="Gallery Title"
+          placeholder="Event Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+
+        <textarea
+          placeholder="Event Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <input type="date" onChange={(e) => setEventDate(e.target.value)} />
+        <input type="time" onChange={(e) => setEventTime(e.target.value)} />
+        <input
+          placeholder="Location"
+          onChange={(e) => setLocation(e.target.value)}
+        />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={featured}
+            onChange={(e) => setFeatured(e.target.checked)}
+          />{" "}
+          Featured Event
+        </label>
 
         <input
           type="file"
@@ -92,52 +112,57 @@ const Gallery = () => {
           onChange={(e) => setFiles([...e.target.files])}
         />
 
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
-
         <button onClick={handleUpload} disabled={loading}>
           {loading ? "Uploading..." : "Upload"}
         </button>
       </div>
 
       {/* LIST */}
-      <div className="grid">
-        {galleries.map((item) => (
-          <div className="gallery-admin-card" key={item._id}>
-            <h4>{item.title}</h4>
+      {galleries.length === 0 && <p>No gallery found</p>}
 
-            <div className="preview-grid">
-              {item.type === "image" ? (
-                <img src={item.fileUrl} alt="" />
-              ) : (
-                <video src={item.fileUrl} controls />
-              )}
-            </div>
-
-            <div className="meta">
-              <p><b>Status:</b> {item.status}</p>
-            </div>
+      {galleries.map((g) => (
+        <div key={g._id} className="gallery-block">
+          <div className="gallery-header">
+            <h3>
+              {g.title} {g.featured && "⭐"}
+            </h3>
 
             <div className="actions">
-              <button onClick={() => togglePublish(item)}>
-                {item.status === "published" ? "Unpublish" : "Publish"}
+              <button
+                onClick={() =>
+                  updateGalleryItem(g._id, {
+                    status:
+                      g.status === "published" ? "draft" : "published",
+                  }).then(loadGallery)
+                }
+              >
+                {g.status === "published" ? "Unpublish" : "Publish"}
               </button>
+
               <button
                 className="danger"
-                onClick={() => removeGallery(item._id)}
+                onClick={() => {
+                  if (window.confirm("Delete gallery?")) {
+                    deleteGalleryItem(g._id).then(loadGallery);
+                  }
+                }}
               >
                 Delete
               </button>
             </div>
           </div>
-        ))}
 
-        {galleries.length === 0 && (
-          <p style={{ textAlign: "center" }}>No gallery items</p>
-        )}
-      </div>
+          <div className="media-grid">
+            {g.files.map((file, i) =>
+              file.type === "image" ? (
+                <img key={i} src={file.fileUrl} alt="" />
+              ) : (
+                <video key={i} src={file.fileUrl} controls />
+              )
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

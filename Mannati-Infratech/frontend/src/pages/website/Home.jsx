@@ -7,24 +7,34 @@ const Home = () => {
     <>
       <Navbar />
 
-      {/* HERO SECTION */}
+      {/* SIDE ADMIN LOGIN */}
+      <a href="/admin/login" className="admin-side-btn">
+        Admin Login
+      </a>
+
+      {/* HERO */}
       <section className="hero">
-        <div className="hero-content animate-slide">
+        <div className="hero-bg">
+          <span className="blob pink"></span>
+          <span className="blob blue"></span>
+          <span className="blob orange"></span>
+        </div>
+
+        <div className="hero-content">
           <h1>
-            Building <span>Modern Infrastructure</span>
+            Building <br />
+            <span>Next-Gen Infrastructure</span>
           </h1>
 
           <p>
-            Mannati Infratech delivers reliable construction, infrastructure
-            development, and project execution with quality and trust.
+            Mannati Infratech delivers future-ready infrastructure with
+            engineering excellence, innovation and trust.
           </p>
 
-          {/* 🔥 HERO BUTTONS (FULLY WORKING) */}
           <div className="hero-buttons">
-            <a href="/projects" className="btn primary glow">
+            <a href="/projects" className="btn primary">
               View Projects
             </a>
-
             <a href="/contact" className="btn secondary">
               Contact Us
             </a>
@@ -32,13 +42,29 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ABOUT PREVIEW */}
-      <section className="about-preview fade-in">
+      {/* STATS */}
+      <section className="stats">
+        <div className="stat-card">
+          <h3>50+</h3>
+          <p>Projects Delivered</p>
+        </div>
+        <div className="stat-card">
+          <h3>10+</h3>
+          <p>Years Experience</p>
+        </div>
+        <div className="stat-card">
+          <h3>100%</h3>
+          <p>Client Satisfaction</p>
+        </div>
+      </section>
+
+      {/* ABOUT */}
+      <section className="about-preview">
         <h2>Who We Are</h2>
         <p>
-          Mannati Infratech is a growing infrastructure company focused on
-          construction excellence, timely delivery, and client satisfaction. We
-          work across residential, commercial, and industrial projects.
+          A modern infrastructure company working across residential,
+          commercial and industrial projects with a focus on quality and
+          long-term value.
         </p>
       </section>
 
@@ -47,38 +73,32 @@ const Home = () => {
         <h2 className="section-title">Our Expertise</h2>
 
         <div className="services-grid">
-          <div className="service-card">
+          <div className="service-card pink">
+            <div className="icon">🏗️</div>
             <h3>Construction</h3>
-            <p>
-              End-to-end construction services with premium materials and skilled
-              execution.
-            </p>
+            <p>Premium construction with strong engineering foundations.</p>
           </div>
 
-          <div className="service-card">
+          <div className="service-card blue">
+            <div className="icon">🏢</div>
             <h3>Infrastructure</h3>
-            <p>
-              Roads, buildings, and infrastructure projects delivered using
-              modern standards.
-            </p>
+            <p>Large-scale infrastructure built for durability and growth.</p>
           </div>
 
-          <div className="service-card">
+          <div className="service-card orange">
+            <div className="icon">📊</div>
             <h3>Project Management</h3>
-            <p>
-              Professional planning, monitoring, and on-time project delivery.
-            </p>
+            <p>Smart planning, monitoring and on-time project delivery.</p>
           </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="cta">
-        <h2>Let's Build the Future Together</h2>
-        <p>Contact us today to discuss your next project.</p>
-
-        <a href="/contact" className="btn primary">
-          Get In Touch
+        <h2>Let’s Build Something Remarkable</h2>
+        <p>Partner with Mannati Infratech for your next big project.</p>
+        <a href="/contact" className="btn primary big">
+          Get Started
         </a>
       </section>
 

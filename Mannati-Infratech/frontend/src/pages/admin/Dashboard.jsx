@@ -25,12 +25,14 @@ const Dashboard = () => {
 
     const loadStats = async () => {
       try {
-        const data = await getDashboardStats();
+        const response = await getDashboardStats();
 
-        // ✅ SAFE + REAL DATA MAPPING
+        // ✅ SUPPORT BOTH FORMATS (OLD + NEW)
+        const data = response.stats || response;
+
         setStats({
           enquiries: {
-            total: data?.enquiries?.total ?? data?.enquiries ?? 0,
+            total: data?.enquiries?.total ?? 0,
             pending: data?.enquiries?.pending ?? 0,
             resolved: data?.enquiries?.resolved ?? 0,
           },
@@ -45,7 +47,7 @@ const Dashboard = () => {
         setError("");
       } catch (err) {
         console.error("Dashboard error:", err);
-        setError("Failed to load dashboard");
+        setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
       }
@@ -54,15 +56,19 @@ const Dashboard = () => {
     // 🔹 Initial load
     loadStats();
 
-    // 🔁 REAL-TIME REFRESH (every 5 seconds)
+    // 🔁 REAL-TIME UPDATE (every 5 sec)
     intervalId = setInterval(loadStats, 5000);
 
-    // 🧹 Cleanup
     return () => clearInterval(intervalId);
   }, []);
 
-  if (loading) return <p className="loading-text">Loading dashboard...</p>;
-  if (error) return <p className="error-text">{error}</p>;
+  if (loading) {
+    return <p className="loading-text">Loading dashboard...</p>;
+  }
+
+  if (error) {
+    return <p className="error-text">{error}</p>;
+  }
 
   return (
     <div className="admin-page">
@@ -72,21 +78,9 @@ const Dashboard = () => {
       <div className="dashboard-section">
         <h3>Enquiries</h3>
         <div className="dashboard-grid">
-          <StatCard
-            title="Total Enquiries"
-            value={stats.enquiries.total}
-            color="enquiries"
-          />
-          <StatCard
-            title="Pending Enquiries"
-            value={stats.enquiries.pending}
-            color="warning"
-          />
-          <StatCard
-            title="Resolved Enquiries"
-            value={stats.enquiries.resolved}
-            color="success"
-          />
+          <StatCard title="Total Enquiries" value={stats.enquiries.total} color="enquiries" />
+          <StatCard title="Pending Enquiries" value={stats.enquiries.pending} color="warning" />
+          <StatCard title="Resolved Enquiries" value={stats.enquiries.resolved} color="success" />
         </div>
       </div>
 
@@ -94,11 +88,7 @@ const Dashboard = () => {
       <div className="dashboard-section">
         <h3>Gallery</h3>
         <div className="dashboard-grid">
-          <StatCard
-            title="Gallery Images"
-            value={stats.gallery}
-            color="gallery"
-          />
+          <StatCard title="Gallery Items" value={stats.gallery} color="gallery" />
         </div>
       </div>
 
@@ -106,21 +96,9 @@ const Dashboard = () => {
       <div className="dashboard-section">
         <h3>Projects</h3>
         <div className="dashboard-grid">
-          <StatCard
-            title="Total Projects"
-            value={stats.projects.total}
-            color="projects"
-          />
-          <StatCard
-            title="Active Projects"
-            value={stats.projects.active}
-            color="info"
-          />
-          <StatCard
-            title="Completed Projects"
-            value={stats.projects.completed}
-            color="success"
-          />
+          <StatCard title="Total Projects" value={stats.projects.total} color="projects" />
+          <StatCard title="Active Projects" value={stats.projects.active} color="info" />
+          <StatCard title="Completed Projects" value={stats.projects.completed} color="success" />
         </div>
       </div>
     </div>

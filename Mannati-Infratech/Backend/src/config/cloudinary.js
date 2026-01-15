@@ -6,18 +6,4 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 🔥 GALLERY UPLOAD HELPER
-const uploadToCloudinary = async (filePath, type = "image") => {
-  return await cloudinary.uploader.upload(filePath, {
-    resource_type: type, // image | video
-    folder:
-      type === "video"
-        ? "mannati/gallery/videos"
-        : "mannati/gallery/images",
-  });
-};
-
-module.exports = {
-  cloudinary,
-  uploadToCloudinary,
-};
+module.exports = cloudinary;

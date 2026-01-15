@@ -21,10 +21,7 @@ export const loginAdmin = async (credentials) => {
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Login failed");
-  }
+  if (!res.ok) throw new Error(data.message || "Login failed");
 
   localStorage.setItem("adminToken", data.token);
   return data;
@@ -34,20 +31,14 @@ export const loginAdmin = async (credentials) => {
    AUTH – FORGOT / RESET
 ======================= */
 export const requestPasswordReset = async (payload) => {
-  const res = await fetch(
-    `${API_BASE_URL}/api/auth/forgot-password`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }
-  );
+  const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
   const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to send reset link");
-  }
-
+  if (!res.ok) throw new Error(data.message);
   return data;
 };
 
@@ -62,10 +53,7 @@ export const resetPassword = async (token, payload) => {
   );
 
   const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || "Password reset failed");
-  }
-
+  if (!res.ok) throw new Error(data.message);
   return data;
 };
 
@@ -73,21 +61,31 @@ export const resetPassword = async (token, payload) => {
    GALLERY – ADMIN
 ======================= */
 export const uploadGalleryFiles = async (formData) => {
-  const res = await fetch(`${API_BASE_URL}/api/gallery/upload`, {
+  const res = await fetch(`${API_BASE_URL}/api/gallery`, {
     method: "POST",
-    headers: getAuthHeaders(),
+    headers: getAuthHeaders(), // ❗ FormData → no content-type
     body: formData,
   });
-  return res.json();
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Upload failed");
+  return data;
 };
 
 export const getAdminGallery = async () => {
-  const res = await fetch(`${API_BASE_URL}/api/gallery/admin`, {
-    headers: getAuthHeaders(),
+  const res = await fetch("http://localhost:5000/api/gallery/admin", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
   });
+
   const data = await res.json();
-  return data.items || [];
+  if (!res.ok) throw new Error("Failed to load gallery");
+
+  // 🔥 IMPORTANT FIX
+  return data.galleries || [];
 };
+
 
 export const updateGalleryItem = async (id, payload) => {
   const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
@@ -98,6 +96,7 @@ export const updateGalleryItem = async (id, payload) => {
     },
     body: JSON.stringify(payload),
   });
+
   return res.json();
 };
 
@@ -106,7 +105,77 @@ export const deleteGalleryItem = async (id) => {
     method: "DELETE",
     headers: getAuthHeaders(),
   });
+
   return res.json();
+};
+
+/* =======================
+   GALLERY – PUBLIC
+======================= */
+
+/**
+ * 🔥 MAIN PUBLIC GALLERY
+ * returns flattened files (SAFE)
+ */
+export const getPublicGallery = async () => {
+  const res = await fetch(`${API_BASE_URL}/api/gallery`);
+  const data = await res.json();
+
+  if (!res.ok) throw new Error("Failed to load gallery");
+
+  const files = [];
+
+  // ✅ SAFETY CHECKS (VERY IMPORTANT)
+  if (Array.isArray(data.galleries)) {
+    data.galleries.forEach((gallery) => {
+      if (Array.isArray(gallery.files)) {
+        gallery.files.forEach((file) => {
+          files.push({
+            _id: file.publicId,
+            type: file.type,               // image | video
+            fileUrl: file.fileUrl,         // ✅ real URL
+            title: gallery.title,
+            category: gallery.category,
+            createdAt: gallery.createdAt,  // ✅ FIX for Invalid Date
+          });
+        });
+      }
+    });
+  }
+
+  return files;
+};
+
+/**
+ * 🔁 BACKWARD COMPATIBILITY
+ * Events.jsx (image-only pages)
+ */
+export const getGalleryImages = async () => {
+  const files = await getPublicGallery();
+  return files.filter((f) => f.type === "image");
+};
+
+/**
+ * 🔁 OPTIONAL (videos)
+ */
+export const getGalleryVideos = async () => {
+  const files = await getPublicGallery();
+  return files.filter((f) => f.type === "video");
+};
+
+/* =======================
+   ENQUIRY – PUBLIC
+======================= */
+export const submitEnquiry = async (payload) => {
+  const res = await fetch(`${API_BASE_URL}/api/enquiries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
 };
 
 /* =======================
@@ -118,61 +187,38 @@ export const getDashboardStats = async () => {
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to load dashboard stats");
-  }
-
+  if (!res.ok) throw new Error(data.message);
   return data;
 };
 
-/* =======================
-   GALLERY – PUBLIC (FIX)
-======================= */
-export const getGalleryImages = async () => {
-  const res = await fetch("http://localhost:5000/api/gallery");
-
-  const data = await res.json();
-
-  // backend returns: { success, galleries }
-  // Events.jsx expects images → flatten files
-  const images = [];
-
-  if (data.galleries) {
-    data.galleries.forEach((gallery) => {
-      gallery.files.forEach((file) => {
-        if (file.type === "image") {
-          images.push({
-            _id: file.publicId,
-            imageUrl: file.fileUrl,
-            title: gallery.title,
-          });
-        }
-      });
-    });
-  }
-
-  return images;
-};
-
 
 /* =======================
-   ENQUIRY – PUBLIC
+   PROJECTS – ADMIN
 ======================= */
-export const submitEnquiry = async (enquiryData) => {
-  const res = await fetch("http://localhost:5000/api/enquiries", {
-    method: "POST",
+
+export const getAdminProjects = async () => {
+  const res = await fetch("http://localhost:5000/api/projects/admin", {
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
-    body: JSON.stringify(enquiryData),
   });
 
   const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to load projects");
+  return data.projects;
+};
 
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to submit enquiry");
-  }
+export const createProject = async (payload) => {
+  const res = await fetch("http://localhost:5000/api/projects", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+    body: JSON.stringify(payload),
+  });
 
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Project creation failed");
   return data;
 };

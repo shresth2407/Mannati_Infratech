@@ -9,7 +9,10 @@ const Navbar = () => {
 
   return (
     <header className="website-navbar">
-      <div className="website-logo">Mannati Infratech</div>
+      {/* BRAND NAME */}
+      <div className="brand-logo">
+        Mannati <span>Infratech</span>
+      </div>
 
       <nav className="website-nav-links">
         <NavLink to="/" style={linkStyle}>Home</NavLink>

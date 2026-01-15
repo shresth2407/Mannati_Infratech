@@ -3,28 +3,21 @@ const router = express.Router();
 
 const upload = require("../middlewares/upload");
 const { protectAdmin } = require("../middlewares/authMiddleware");
+const controller = require("../controllers/galleryController");
 
-const {
-  uploadGallery,
-  getAdminGallery,
-  getPublicGallery,
-  updateGallery,
-  deleteGallery,
-} = require("../controllers/galleryController"); // ✅ FIXED
-
-// 🔐 ADMIN
+// ADMIN
 router.post(
   "/",
   protectAdmin,
   upload.array("files", 20),
-  uploadGallery
+  controller.uploadGallery
 );
 
-router.get("/admin", protectAdmin, getAdminGallery);
-router.put("/:id", protectAdmin, updateGallery);
-router.delete("/:id", protectAdmin, deleteGallery);
+router.get("/admin", protectAdmin, controller.getAdminGallery);
+router.put("/:id", protectAdmin, controller.updateGallery);
+router.delete("/:id", protectAdmin, controller.deleteGallery);
 
-// 🌐 PUBLIC
-router.get("/", getPublicGallery);
+// PUBLIC
+router.get("/", controller.getPublicGallery);
 
 module.exports = router;
