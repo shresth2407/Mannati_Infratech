@@ -63,7 +63,7 @@ export const resetPassword = async (token, payload) => {
 export const uploadGalleryFiles = async (formData) => {
   const res = await fetch(`${API_BASE_URL}/api/gallery`, {
     method: "POST",
-    headers: getAuthHeaders(), // ❗ FormData → no content-type
+    headers: getAuthHeaders(),
     body: formData,
   });
 
@@ -73,7 +73,7 @@ export const uploadGalleryFiles = async (formData) => {
 };
 
 export const getAdminGallery = async () => {
-  const res = await fetch("http://localhost:5000/api/gallery/admin", {
+  const res = await fetch(`${API_BASE_URL}/api/gallery/admin`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
@@ -81,11 +81,8 @@ export const getAdminGallery = async () => {
 
   const data = await res.json();
   if (!res.ok) throw new Error("Failed to load gallery");
-
-  // 🔥 IMPORTANT FIX
   return data.galleries || [];
 };
-
 
 export const updateGalleryItem = async (id, payload) => {
   const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
@@ -112,52 +109,36 @@ export const deleteGalleryItem = async (id) => {
 /* =======================
    GALLERY – PUBLIC
 ======================= */
-
-/**
- * 🔥 MAIN PUBLIC GALLERY
- * returns flattened files (SAFE)
- */
 export const getPublicGallery = async () => {
   const res = await fetch(`${API_BASE_URL}/api/gallery`);
   const data = await res.json();
-
   if (!res.ok) throw new Error("Failed to load gallery");
 
   const files = [];
-
-  // ✅ SAFETY CHECKS (VERY IMPORTANT)
   if (Array.isArray(data.galleries)) {
     data.galleries.forEach((gallery) => {
       if (Array.isArray(gallery.files)) {
         gallery.files.forEach((file) => {
           files.push({
             _id: file.publicId,
-            type: file.type,               // image | video
-            fileUrl: file.fileUrl,         // ✅ real URL
+            type: file.type,
+            fileUrl: file.fileUrl,
             title: gallery.title,
             category: gallery.category,
-            createdAt: gallery.createdAt,  // ✅ FIX for Invalid Date
+            createdAt: gallery.createdAt,
           });
         });
       }
     });
   }
-
   return files;
 };
 
-/**
- * 🔁 BACKWARD COMPATIBILITY
- * Events.jsx (image-only pages)
- */
 export const getGalleryImages = async () => {
   const files = await getPublicGallery();
   return files.filter((f) => f.type === "image");
 };
 
-/**
- * 🔁 OPTIONAL (videos)
- */
 export const getGalleryVideos = async () => {
   const files = await getPublicGallery();
   return files.filter((f) => f.type === "video");
@@ -191,10 +172,7 @@ export const getDashboardStats = async () => {
   return data;
 };
 
-
-/* =======================
-   PROJECTS – ADMIN
-======================= */
+/* ================= PROJECTS ================= */
 
 export const getAdminProjects = async () => {
   const res = await fetch("http://localhost:5000/api/projects/admin", {
@@ -204,7 +182,7 @@ export const getAdminProjects = async () => {
   });
 
   const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Failed to load projects");
+  if (!res.ok) throw new Error("Projects load failed");
   return data.projects;
 };
 
@@ -219,6 +197,29 @@ export const createProject = async (payload) => {
   });
 
   const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Project creation failed");
+  if (!res.ok) throw new Error(data.message);
   return data;
 };
+
+export const getPublicProjects = async () => {
+  const res = await fetch("http://localhost:5000/api/projects");
+  const data = await res.json();
+  if (!res.ok) throw new Error("Public projects load failed");
+  return data.projects;
+};
+
+export const updateProject = async (id, payload) => {
+  const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error("Update failed");
+  return data;
+};
+

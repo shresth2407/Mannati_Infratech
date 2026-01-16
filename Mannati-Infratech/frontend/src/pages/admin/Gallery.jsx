@@ -9,23 +9,27 @@ import "./galleryAdmin.css";
 
 const Gallery = () => {
   const [files, setFiles] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("events");
-  const [status, setStatus] = useState("draft");
-  const [featured, setFeatured] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
-  const [eventDate, setEventDate] = useState("");
-  const [eventTime, setEventTime] = useState("");
-  const [location, setLocation] = useState("");
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    category: "events",
+    status: "draft",
+    featured: false,
+    eventDate: "",
+    eventTime: "",
+    location: "",
+  });
 
   const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  /* ================= LOAD ================= */
   const loadGallery = async () => {
     try {
-      const galleries = await getAdminGallery(); // 🔥 array directly
-      setGalleries(galleries);
+      const data = await getAdminGallery();
+      setGalleries(data || []);
     } catch (err) {
       console.error("Admin gallery load failed", err);
     }
@@ -35,72 +39,141 @@ const Gallery = () => {
     loadGallery();
   }, []);
 
-  const handleUpload = async () => {
-    if (!title || files.length === 0) {
-      alert("Title & files required");
+  /* ================= RESET FORM ================= */
+  const resetForm = () => {
+    setForm({
+      title: "",
+      description: "",
+      category: "events",
+      status: "draft",
+      featured: false,
+      eventDate: "",
+      eventTime: "",
+      location: "",
+    });
+    setFiles([]);
+    setEditingId(null);
+  };
+
+  /* ================= CREATE / UPDATE ================= */
+  const submitGallery = async () => {
+    if (!form.title) {
+      alert("Title required");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("status", status);
-    formData.append("featured", featured);
-    formData.append("eventDate", eventDate);
-    formData.append("eventTime", eventTime);
-    formData.append("location", location);
-
-    files.forEach((f) => formData.append("files", f));
-
     setLoading(true);
+
     try {
-      await uploadGalleryFiles(formData);
-      setFiles([]);
-      setTitle("");
-      setDescription("");
-      setEventDate("");
-      setEventTime("");
-      setLocation("");
-      setFeatured(false);
+      if (editingId) {
+        // 🔥 UPDATE (append files)
+        await updateGalleryItem(editingId, {
+          ...form,
+        });
+
+        if (files.length > 0) {
+          const fd = new FormData();
+          files.forEach((f) => fd.append("files", f));
+          await uploadGalleryFiles(fd);
+        }
+      } else {
+        // 🔥 CREATE
+        if (files.length === 0) {
+          alert("Files required");
+          return;
+        }
+
+        const fd = new FormData();
+        Object.entries(form).forEach(([k, v]) =>
+          fd.append(k, v)
+        );
+        files.forEach((f) => fd.append("files", f));
+
+        await uploadGalleryFiles(fd);
+      }
+
+      resetForm();
       loadGallery();
     } catch (err) {
-      alert(err.message);
+      alert(err.message || "Gallery save failed");
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ================= EDIT ================= */
+  const editGallery = (g) => {
+    setEditingId(g._id);
+    setForm({
+      title: g.title,
+      description: g.description || "",
+      category: g.category || "events",
+      status: g.status,
+      featured: g.featured,
+      eventDate: g.eventDate
+        ? g.eventDate.slice(0, 10)
+        : "",
+      eventTime: g.eventTime || "",
+      location: g.location || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="admin-gallery">
       <h1>Gallery Management</h1>
 
-      {/* UPLOAD */}
+      {/* ================= ADD / EDIT ================= */}
       <div className="upload-card">
+        <h3>{editingId ? "Edit Gallery" : "Add New Gallery"}</h3>
+
         <input
           placeholder="Event Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={form.title}
+          onChange={(e) =>
+            setForm({ ...form, title: e.target.value })
+          }
         />
 
         <textarea
           placeholder="Event Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={form.description}
+          onChange={(e) =>
+            setForm({ ...form, description: e.target.value })
+          }
         />
 
-        <input type="date" onChange={(e) => setEventDate(e.target.value)} />
-        <input type="time" onChange={(e) => setEventTime(e.target.value)} />
+        <input
+          type="date"
+          value={form.eventDate}
+          onChange={(e) =>
+            setForm({ ...form, eventDate: e.target.value })
+          }
+        />
+
+        <input
+          type="time"
+          value={form.eventTime}
+          onChange={(e) =>
+            setForm({ ...form, eventTime: e.target.value })
+          }
+        />
+
         <input
           placeholder="Location"
-          onChange={(e) => setLocation(e.target.value)}
+          value={form.location}
+          onChange={(e) =>
+            setForm({ ...form, location: e.target.value })
+          }
         />
 
         <label>
           <input
             type="checkbox"
-            checked={featured}
-            onChange={(e) => setFeatured(e.target.checked)}
+            checked={form.featured}
+            onChange={(e) =>
+              setForm({ ...form, featured: e.target.checked })
+            }
           />{" "}
           Featured Event
         </label>
@@ -112,14 +185,22 @@ const Gallery = () => {
           onChange={(e) => setFiles([...e.target.files])}
         />
 
-        <button onClick={handleUpload} disabled={loading}>
-          {loading ? "Uploading..." : "Upload"}
+        <button onClick={submitGallery} disabled={loading}>
+          {loading
+            ? "Saving..."
+            : editingId
+            ? "Update Gallery"
+            : "Upload Gallery"}
         </button>
+
+        {editingId && (
+          <button className="cancel-btn" onClick={resetForm}>
+            Cancel Edit
+          </button>
+        )}
       </div>
 
-      {/* LIST */}
-      {galleries.length === 0 && <p>No gallery found</p>}
-
+      {/* ================= LIST ================= */}
       {galleries.map((g) => (
         <div key={g._id} className="gallery-block">
           <div className="gallery-header">
@@ -128,15 +209,23 @@ const Gallery = () => {
             </h3>
 
             <div className="actions">
+              <button onClick={() => editGallery(g)}>
+                Edit
+              </button>
+
               <button
                 onClick={() =>
                   updateGalleryItem(g._id, {
                     status:
-                      g.status === "published" ? "draft" : "published",
+                      g.status === "published"
+                        ? "draft"
+                        : "published",
                   }).then(loadGallery)
                 }
               >
-                {g.status === "published" ? "Unpublish" : "Publish"}
+                {g.status === "published"
+                  ? "Unpublish"
+                  : "Publish"}
               </button>
 
               <button

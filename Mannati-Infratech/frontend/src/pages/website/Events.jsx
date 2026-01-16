@@ -10,6 +10,8 @@ const Events = () => {
   const [events, setEvents] = useState([]);
   const [year, setYear] = useState("all");
   const [city, setCity] = useState("all");
+
+  const [activeEvent, setActiveEvent] = useState(null);
   const [activeFile, setActiveFile] = useState(null);
 
   useEffect(() => {
@@ -18,7 +20,9 @@ const Events = () => {
       .then((data) => setEvents(data.galleries || []));
   }, []);
 
-  /* ===== FILTERS ===== */
+  /* ======================
+     FILTERS
+  ====================== */
   const years = [
     ...new Set(
       events
@@ -68,31 +72,36 @@ const Events = () => {
         </select>
       </section>
 
-      {/* EVENT LIST */}
-      <section className="events-gallery">
-        <div className="event-list">
-          {filteredEvents.map((e) => {
-            const firstFile = e.files[0];
-
-            return (
+      {/* ======================
+          EVENT LIST
+      ====================== */}
+      {!activeEvent && (
+        <section className="events-gallery">
+          <div className="event-list">
+            {filteredEvents.map((e) => (
               <div
                 key={e._id}
                 className="event-card-compact colorful"
-                onClick={() => setActiveFile(firstFile)} // 🔥 FIX HERE
+                onClick={() => setActiveEvent(e)}
               >
                 <div className="event-thumb">
-                  {firstFile?.type === "video" ? (
+                  {e.files[0]?.type === "video" ? (
                     <img src={DEFAULT_VIDEO_THUMB} alt="video" />
                   ) : (
-                    <img src={firstFile?.fileUrl} alt={e.title} />
+                    <img src={e.files[0]?.fileUrl} alt={e.title} />
                   )}
-
-                  {/* VISUAL ONLY */}
-                  <div className="view-cta">View</div>
+                  <div className="view-cta">View Event</div>
                 </div>
 
                 <div className="event-info">
                   <h3>{e.title}</h3>
+
+                  {/* ✅ DESCRIPTION SHOWN HERE */}
+                  {e.description && (
+                    <p className="event-description">
+                      {e.description}
+                    </p>
+                  )}
 
                   <p className="event-meta-text">
                     {e.eventDate
@@ -106,12 +115,67 @@ const Events = () => {
                   </p>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* MODAL */}
+      {/* ======================
+          EVENT INSIDE (ALL FILES)
+      ====================== */}
+      {activeEvent && (
+        <section className="events-gallery">
+          <button
+            className="back-btn"
+            onClick={() => {
+              setActiveEvent(null);
+              setActiveFile(null);
+            }}
+          >
+            ← Back
+          </button>
+
+          <h2 className="folder-heading">{activeEvent.title}</h2>
+
+          {/* ✅ DESCRIPTION ON DETAIL VIEW */}
+          {activeEvent.description && (
+            <p className="event-description center">
+              {activeEvent.description}
+            </p>
+          )}
+
+          <p className="event-meta-text center">
+            {activeEvent.eventDate
+              ? new Date(activeEvent.eventDate).toLocaleDateString()
+              : "Date TBA"}{" "}
+            • {activeEvent.eventTime || "Time TBA"} • 📍{" "}
+            {activeEvent.location || "Location TBA"}
+          </p>
+
+          <div className="gallery-grid">
+            {activeEvent.files.map((file, i) => (
+              <div
+                key={i}
+                className="gallery-card premium"
+                onClick={() => setActiveFile(file)}
+              >
+                {file.type === "image" ? (
+                  <img src={file.fileUrl} alt="" />
+                ) : (
+                  <div className="video-thumb">
+                    <video src={file.fileUrl} muted />
+                    <span className="play-icon">▶</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ======================
+          MODAL
+      ====================== */}
       {activeFile && (
         <div className="image-modal">
           <span className="close-btn" onClick={() => setActiveFile(null)}>

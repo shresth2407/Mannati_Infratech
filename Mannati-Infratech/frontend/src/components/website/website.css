@@ -14,6 +14,9 @@ body {
    PREMIUM COLOURFUL NAVBAR
 ========================= */
 
+/* =====================
+   WEBSITE NAVBAR – TRANSPARENT
+===================== */
 .website-navbar {
   position: sticky;
   top: 0;
@@ -23,35 +26,40 @@ body {
   justify-content: space-between;
   align-items: center;
 
-  padding: 18px 60px;
-  background: linear-gradient(
-    90deg,
-    #b5c3f7,
-    #cdd3e6,
-    #c1d1ee
-  );
+  padding: 20px 64px;
 
-  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.35);
+  /* transparent background */
+  background: rgba(255, 255, 255, 0.08);
+
+  /* subtle border for visibility */
+  border-bottom: 1px solid rgba(15, 23, 42, 0.15);
+
+  /* soft shadow (no blur) */
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+
+  transition: all 0.3s ease;
 }
 
-/* LOGO */
+/* =====================
+   LOGO
+===================== */
 .website-logo {
   font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
 
   background: linear-gradient(
     90deg,
-    #ffffff,
-    #e0e7ff,
-    #ffffff
+    #020617,
+    #2563eb,
+    #020617
   );
   background-size: 200% auto;
-
   color: transparent;
   background-clip: text;
+  -webkit-background-clip: text;
 
-  animation: logoShine 3s linear infinite;
+  animation: logoShine 4s linear infinite;
 }
 
 /* LOGO ANIMATION */
@@ -64,59 +72,68 @@ body {
   }
 }
 
-/* NAV LINKS */
+/* =====================
+   NAV LINKS
+===================== */
 .website-nav-links a {
-  margin-left: 34px;
+  margin-left: 36px;
   text-decoration: none;
   font-size: 15px;
-  font-weight: 500;
-  color: #e5e7eb;
+  font-weight: 600;
+  color: #020617;
   position: relative;
   transition: color 0.3s ease;
 }
 
-/* UNDERLINE ANIMATION */
+/* underline */
 .website-nav-links a::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -6px;
+  bottom: -8px;
   width: 0%;
   height: 2px;
-  background: #ffffff;
+  background: linear-gradient(
+    90deg,
+    var(--primary),
+    var(--secondary)
+  );
   transition: width 0.3s ease;
 }
 
 .website-nav-links a:hover {
-  color: #ffffff;
+  color: var(--primary);
 }
 
 .website-nav-links a:hover::after {
   width: 100%;
 }
 
-/* ACTIVE LINK SUPPORT */
+/* active link */
 .website-nav-links a[aria-current="page"] {
-  color: #ffffff;
-  font-weight: 600;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .website-nav-links a[aria-current="page"]::after {
   width: 100%;
 }
 
-/* MOBILE */
+/* =====================
+   MOBILE NAVBAR
+===================== */
 @media (max-width: 768px) {
   .website-navbar {
     flex-direction: column;
-    gap: 14px;
-    padding: 16px 30px;
+    gap: 16px;
+    padding: 16px 28px;
   }
 
   .website-nav-links a {
-    margin: 0 12px;
+    margin: 0 14px;
   }
 }
+
 
 /* =========================
    PREMIUM COLORFUL FOOTER
@@ -903,24 +920,50 @@ h1, h2, h3 {
 
 /* ===== EVENTS HERO SECTION ===== */
 
+/* ===== EVENTS HERO (FIXED ALIGNMENT) ===== */
+
 .events-hero {
   padding: 90px 8% 70px;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #fff;
-  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* 🔥 horizontal center */
+  justify-content: center;  /* 🔥 vertical center */
+  text-align: center;       /* 🔥 text center */
 }
 
 .events-hero h1 {
   font-size: 42px;
   font-weight: 700;
   letter-spacing: 1px;
+  margin-bottom: 12px;
 }
 
 .events-hero p {
-  margin-top: 12px;
+  max-width: 680px;         /* 🔥 controlled width */
   font-size: 16px;
-  color: #dcdcdc;
+  line-height: 1.6;
+  color: #e5e7eb;
+  margin: 0 auto;           /* 🔥 perfect center */
 }
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+  .events-hero {
+    padding: 70px 6% 55px;
+  }
+
+  .events-hero h1 {
+    font-size: 32px;
+  }
+
+  .events-hero p {
+    font-size: 15px;
+  }
+}
+
 
 /* ===== GALLERY SECTION ===== */
 

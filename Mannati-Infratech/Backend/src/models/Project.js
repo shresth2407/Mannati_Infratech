@@ -2,42 +2,29 @@ const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    description: {
-      type: String,
-      trim: true,
-    },
-
-    location: {
-      type: String,
-      trim: true,
-    },
-
-    files: [
-      {
-        type: {
-          type: String,
-          enum: ["image", "video"],
-        },
-        fileUrl: String,
-        publicId: String,
-      },
-    ],
-
+    title: String,
+    description: String,
     status: {
       type: String,
-      enum: ["published", "draft"],
-      default: "draft",
+      enum: ["ongoing", "completed"],
+      default: "ongoing",
+    },
+
+    // 🔥 EXISTING (single image)
+    image: String,
+
+    // ✅ NEW (future multiple images – OPTIONAL)
+    images: {
+      type: [String],
+      default: [],
+    },
+
+    published: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
 );
 
-// 🔥 VERY IMPORTANT FIX
-module.exports =
-  mongoose.models.Project || mongoose.model("Project", projectSchema);
+module.exports = mongoose.model("Project", projectSchema);

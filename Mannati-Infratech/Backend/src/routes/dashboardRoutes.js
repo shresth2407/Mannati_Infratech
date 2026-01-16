@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const {
-  getDashboardStats,
-} = require("../controllers/dashboard.controller");
+const { getDashboardStats } = require("../controllers/dashboardController");
+const verifyAdmin = require("../middlewares/verifyAdmin");
 
-router.get("/stats", getDashboardStats);
+router.get("/stats", verifyAdmin, getDashboardStats);
 
 module.exports = router;

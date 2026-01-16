@@ -13,7 +13,7 @@ import Gallery from "./pages/admin/Gallery";
 import AdminProjects from "./pages/admin/Projects";
 import Login from "./pages/admin/Login";
 import ResetPassword from "./pages/admin/ResetPassword";
-import ProtectedAdmin from "./components/admin/ProtectedAdmin";
+import ForgotPassword from "./pages/admin/ForgotPassword";
 
 /* 🌐 PUBLIC WEBSITE */
 import Home from "./pages/website/Home";
@@ -22,7 +22,7 @@ import Projects from "./pages/website/Projects";
 import Events from "./pages/website/Events";
 import EventDetail from "./pages/website/EventDetail";
 import Contact from "./pages/website/Contact";
-import ForgotPassword from "./pages/admin/ForgotPassword";
+
 const App = () => {
   return (
     <Routes>
@@ -34,25 +34,21 @@ const App = () => {
       <Route path="/events/:id" element={<EventDetail />} />
       <Route path="/contact" element={<Contact />} />
 
-      {/* 🔑 ADMIN LOGIN */}
+      {/* 🔑 ADMIN AUTH */}
       <Route path="/admin/login" element={<Login />} />
       <Route path="/admin/forgot-password" element={<ForgotPassword />} />
       <Route
-  path="/admin/reset-password/:token"
-  element={<ResetPassword />}
-/>
-<Route path="/admin/projects" element={
-  <ProtectedAdmin>
-    <AdminProjects />
-  </ProtectedAdmin>
-} />
+        path="/admin/reset-password/:token"
+        element={<ResetPassword />}
+      />
 
-      {/* 🔒 PROTECTED ADMIN ROUTES */}
+      {/* 🔒 PROTECTED ADMIN ROUTES (WITH SIDEBAR) */}
       <Route element={<AdminRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/enquiries" element={<Enquiries />} />
           <Route path="/admin/gallery" element={<Gallery />} />
+          <Route path="/admin/projects" element={<AdminProjects />} />
         </Route>
       </Route>
 

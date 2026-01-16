@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getDashboardStats } from "../../api/api";
 import "../../components/admin/admin.css";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const [stats, setStats] = useState({
     enquiries: {
       total: 0,
@@ -27,7 +30,7 @@ const Dashboard = () => {
       try {
         const response = await getDashboardStats();
 
-        // ✅ SUPPORT BOTH FORMATS (OLD + NEW)
+        // ✅ SUPPORT BOTH FORMATS
         const data = response.stats || response;
 
         setStats({
@@ -72,39 +75,79 @@ const Dashboard = () => {
 
   return (
     <div className="admin-page">
-      <h2 className="admin-title">Admin Dashboard</h2>
+      {/* ================= HEADER ================= */}
+      <div className="dashboard-header">
+        <h2 className="admin-title">Admin Dashboard</h2>
 
-      {/* 🔵 ENQUIRIES */}
+        {/* 🌐 GO TO WEBSITE */}
+        <button
+          className="go-website-btn"
+          onClick={() => navigate("/")}
+        >
+          🌐 View Website
+        </button>
+      </div>
+
+      {/* ================= ENQUIRIES ================= */}
       <div className="dashboard-section">
         <h3>Enquiries</h3>
         <div className="dashboard-grid">
-          <StatCard title="Total Enquiries" value={stats.enquiries.total} color="enquiries" />
-          <StatCard title="Pending Enquiries" value={stats.enquiries.pending} color="warning" />
-          <StatCard title="Resolved Enquiries" value={stats.enquiries.resolved} color="success" />
+          <StatCard
+            title="Total Enquiries"
+            value={stats.enquiries.total}
+            color="enquiries"
+          />
+          <StatCard
+            title="Pending Enquiries"
+            value={stats.enquiries.pending}
+            color="warning"
+          />
+          <StatCard
+            title="Resolved Enquiries"
+            value={stats.enquiries.resolved}
+            color="success"
+          />
         </div>
       </div>
 
-      {/* 🖼️ GALLERY */}
+      {/* ================= GALLERY ================= */}
       <div className="dashboard-section">
         <h3>Gallery</h3>
         <div className="dashboard-grid">
-          <StatCard title="Gallery Items" value={stats.gallery} color="gallery" />
+          <StatCard
+            title="Gallery Items"
+            value={stats.gallery}
+            color="gallery"
+          />
         </div>
       </div>
 
-      {/* 🟢 PROJECTS */}
+      {/* ================= PROJECTS ================= */}
       <div className="dashboard-section">
         <h3>Projects</h3>
         <div className="dashboard-grid">
-          <StatCard title="Total Projects" value={stats.projects.total} color="projects" />
-          <StatCard title="Active Projects" value={stats.projects.active} color="info" />
-          <StatCard title="Completed Projects" value={stats.projects.completed} color="success" />
+          <StatCard
+            title="Total Projects"
+            value={stats.projects.total}
+            color="projects"
+          />
+          <StatCard
+            title="Active Projects"
+            value={stats.projects.active}
+            color="info"
+          />
+          <StatCard
+            title="Completed Projects"
+            value={stats.projects.completed}
+            color="success"
+          />
         </div>
       </div>
     </div>
   );
 };
 
+/* ================= STAT CARD ================= */
 const StatCard = ({ title, value, color }) => {
   return (
     <div className={`dashboard-card ${color}`}>

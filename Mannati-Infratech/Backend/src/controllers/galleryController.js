@@ -3,27 +3,28 @@ const path = require("path");
 const Gallery = require("../models/Gallery");
 const cloudinary = require("../config/cloudinary");
 
-// helper
+/* =========================
+   HELPERS
+========================= */
+
 const getFileType = (filename) => {
   const ext = path.extname(filename).toLowerCase();
-  const imageExt = [".jpg", ".jpeg", ".png", ".webp"];
-  const videoExt = [".mp4", ".mov", ".avi", ".mkv", ".webm"];
-
-  if (imageExt.includes(ext)) return "image";
-  if (videoExt.includes(ext)) return "video";
+  if ([".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return "image";
+  if ([".mp4", ".mov", ".avi", ".mkv", ".webm"].includes(ext)) return "video";
   return null;
 };
 
-/**
- * ADMIN – Upload Event Gallery
- */
+/* =========================
+   ADMIN – UPLOAD
+========================= */
+
 const uploadGallery = async (req, res) => {
   try {
     const {
       title,
-      description,
       category,
       status,
+      description,
       eventDate,
       eventTime,
       location,
@@ -31,106 +32,147 @@ const uploadGallery = async (req, res) => {
     } = req.body;
 
     if (!title) {
-      return res.status(400).json({ success: false, message: "Title required" });
+      return res.status(400).json({
+        success: false,
+        message: "Title required",
+      });
     }
 
     if (!req.files || req.files.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No files uploaded" });
+      return res.status(400).json({
+        success: false,
+        message: "No files uploaded",
+      });
     }
 
     const files = [];
 
     for (const file of req.files) {
-      const type = getFileType(file.originalname);
-      if (!type) continue;
-
-      const result = await cloudinary.uploader.upload(file.path, {
-        resource_type: type === "video" ? "video" : "image",
-        folder: "mannati/events",
-      });
+      const result = await cloudinary.uploader.upload(
+        file.path,
+        {
+          resource_type: "auto",
+          folder: `mannati/${category || "events"}`,
+        }
+      );
 
       files.push({
-        type,
+        type: result.resource_type === "video" ? "video" : "image",
         fileUrl: result.secure_url,
         publicId: result.public_id,
         format: result.format,
         bytes: result.bytes,
       });
 
+      // safe cleanup
       try {
         fs.unlinkSync(file.path);
-      } catch {}
+      } catch (e) {
+        console.warn("Temp file delete skipped");
+      }
     }
 
     const gallery = await Gallery.create({
       title,
-      description,
       category,
-      status: status || "draft",
-
-      eventDate: eventDate ? new Date(eventDate) : null,
+      description,
+      eventDate: eventDate || null,
       eventTime: eventTime || "",
       location: location || "",
-
       featured: featured === "true" || featured === true,
-
+      status: status || "draft",
       files,
     });
 
-    res.status(201).json({ success: true, gallery });
+    res.status(201).json({
+      success: true,
+      gallery,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("UPLOAD FAILED:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message || "Upload failed",
+    });
+  }
+};
+
+
+/* =========================
+   ADMIN – GET ALL
+========================= */
+
+const getAdminGallery = async (req, res) => {
+  try {
+    const galleries = await Gallery.find().sort({ createdAt: -1 });
+    res.json({ success: true, galleries });
+  } catch (err) {
     res.status(500).json({ success: false });
   }
 };
 
-/**
- * ADMIN – Get all
- */
-const getAdminGallery = async (req, res) => {
-  const galleries = await Gallery.find().sort({ createdAt: -1 });
-  res.json({ success: true, galleries });
-};
+/* =========================
+   PUBLIC – GET EVENTS
+========================= */
 
-/**
- * PUBLIC – Published events
- */
 const getPublicGallery = async (req, res) => {
-  const galleries = await Gallery.find({ status: "published" }).sort({
-    createdAt: -1,
-  });
-  res.json({ success: true, galleries });
-};
+  try {
+    const galleries = await Gallery.find({
+      status: "published",
+    })
+      .sort({ eventDate: -1, createdAt: -1 })
+      .lean(); // 🔥 important (prevents mongoose issues)
 
-/**
- * ADMIN – Update
- */
-const updateGallery = async (req, res) => {
-  const updated = await Gallery.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
-  res.json({ success: true, gallery: updated });
-};
-
-/**
- * ADMIN – Delete
- */
-const deleteGallery = async (req, res) => {
-  const gallery = await Gallery.findById(req.params.id);
-  if (!gallery) return res.status(404).json({ success: false });
-
-  for (const file of gallery.files) {
-    await cloudinary.uploader.destroy(file.publicId, {
-      resource_type: file.type,
+    res.json({
+      success: true,
+      galleries: galleries || [],
+    });
+  } catch (err) {
+    console.error("PUBLIC GALLERY ERROR:", err);
+    res.status(500).json({
+      success: false,
+      galleries: [],
     });
   }
+};
 
-  await gallery.deleteOne();
-  res.json({ success: true });
+/* =========================
+   UPDATE
+========================= */
+
+const updateGallery = async (req, res) => {
+  try {
+    const updated = await Gallery.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json({ success: true, gallery: updated });
+  } catch {
+    res.status(500).json({ success: false });
+  }
+};
+
+/* =========================
+   DELETE
+========================= */
+
+const deleteGallery = async (req, res) => {
+  try {
+    const gallery = await Gallery.findById(req.params.id);
+    if (!gallery) return res.status(404).json({ success: false });
+
+    for (const file of gallery.files) {
+      await cloudinary.uploader.destroy(file.publicId, {
+        resource_type: file.type === "video" ? "video" : "image",
+      });
+    }
+
+    await gallery.deleteOne();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
 };
 
 module.exports = {
