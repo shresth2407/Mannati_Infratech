@@ -63,6 +63,11 @@ const Login = () => {
           <Link to="/admin/forgot-password">Forgot password?</Link>
         </div>
 
+        {/* ✅ NEW : BACK TO WEBSITE */}
+        <div className="back-to-site">
+          <Link to="/">← Back to Website</Link>
+        </div>
+
         <p className="login-footer">
           © {new Date().getFullYear()} Mannati Infratech
         </p>

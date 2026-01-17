@@ -2,24 +2,30 @@ import { NavLink } from "react-router-dom";
 import "./website.css";
 
 const Navbar = () => {
-  const linkStyle = ({ isActive }) => ({
-    color: isActive ? "#1e40af" : "#374151",
-    fontWeight: isActive ? "600" : "500",
-  });
-
   return (
     <header className="website-navbar">
-      {/* BRAND NAME */}
+      {/* BRAND */}
       <div className="brand-logo">
-        Mannati <span>Infratech</span>
+        <div className="infra-logo">
+          <span className="pillar left"></span>
+          <span className="pillar center"></span>
+          <span className="pillar right"></span>
+          <span className="foundation"></span>
+        </div>
+
+        <div className="brand-text">
+          Mannati
+          <span> Infratech</span>
+        </div>
       </div>
 
+      {/* NAV */}
       <nav className="website-nav-links">
-        <NavLink to="/" style={linkStyle}>Home</NavLink>
-        <NavLink to="/about" style={linkStyle}>About</NavLink>
-        <NavLink to="/projects" style={linkStyle}>Projects</NavLink>
-        <NavLink to="/events" style={linkStyle}>Events</NavLink>
-        <NavLink to="/contact" style={linkStyle}>Contact</NavLink>
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/projects">Projects</NavLink>
+        <NavLink to="/events">Events</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
       </nav>
     </header>
   );

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/website/Navbar";
-import "../../components/website/website.css";
-
+import "./event.css";
 const API_BASE_URL = "http://localhost:5000";
 const DEFAULT_VIDEO_THUMB =
   "https://dummyimage.com/600x400/000/ffffff&text=Video";

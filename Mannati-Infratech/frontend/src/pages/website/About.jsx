@@ -9,15 +9,34 @@ const About = () => {
 
       {/* HERO */}
       <section className="about-hero">
-        <div className="about-hero-content">
-          <h1>Building Infrastructure That Lasts</h1>
-          <p>
-            Mannati Infratech is a trusted infrastructure and construction
-            company delivering quality-driven residential, commercial,
-            and industrial projects across India.
-          </p>
-        </div>
-      </section>
+  {/* VIDEO BACKGROUND */}
+  <div className="about-hero-video">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+    >
+      <source src="/videos/video_2.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  {/* HERO CONTENT */}
+ <div className="about-hero-content">
+  <h1 className="type-title">
+    Building Infrastructure That Lasts
+  </h1>
+
+  <p className="type-subtitle">
+    Mannati Infratech is a trusted infrastructure and construction
+    company delivering quality-driven residential, commercial,
+    and industrial projects across India.
+  </p>
+</div>
+
+</section>
+
 
       {/* COMPANY OVERVIEW */}
       <section className="about-section">

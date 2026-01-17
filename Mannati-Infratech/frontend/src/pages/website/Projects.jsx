@@ -39,7 +39,7 @@ const Projects = () => {
       {/* HERO */}
       <section className="projects-hero">
         <h1>Our Projects</h1>
-        <p>Explore our ongoing and completed infrastructure projects</p>
+        
       </section>
 
       {/* FILTER */}

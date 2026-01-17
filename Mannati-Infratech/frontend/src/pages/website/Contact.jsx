@@ -47,21 +47,14 @@ const Contact = () => {
     <>
       <Navbar />
 
-      {/* HERO SECTION */}
-      <section className="contact-hero">
-        <div className="contact-hero-content animate-slide">
-          <h1>Contact Us</h1>
-          <p>
-            Let's discuss your project requirements and build something great
-            together.
-          </p>
-        </div>
-      </section>
+      {/* HERO */}
+      <section className="contact-hero"></section>
 
-      {/* CONTACT CONTENT */}
-      <section className="contact-section fade-in">
+      {/* CONTACT SECTION */}
+      <section className="contact-section">
         <div className="contact-container">
-          {/* LEFT INFO */}
+          
+          {/* INFO CARD */}
           <div className="contact-info">
             <h2>Get In Touch</h2>
             <p>
@@ -85,10 +78,9 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* RIGHT FORM */}
+          {/* FORM CARD */}
           <div className="contact-form-card">
             <h3>Send Enquiry</h3>
-
             {error && <div className="error-msg">{error}</div>}
             {success && <div className="success-msg">{success}</div>}
 
@@ -101,7 +93,6 @@ const Contact = () => {
                 onChange={handleChange}
                 required
               />
-
               <input
                 type="email"
                 name="email"
@@ -110,7 +101,6 @@ const Contact = () => {
                 onChange={handleChange}
                 required
               />
-
               <input
                 type="text"
                 name="phone"
@@ -119,7 +109,6 @@ const Contact = () => {
                 onChange={handleChange}
                 required
               />
-
               <textarea
                 name="message"
                 placeholder="Your Message"
@@ -128,18 +117,26 @@ const Contact = () => {
                 onChange={handleChange}
                 required
               />
-
               <button type="submit" disabled={loading}>
                 {loading ? "Sending..." : "Submit Enquiry"}
               </button>
             </form>
           </div>
+
+          {/* MAP CARD (FULL WIDTH BELOW) */}
+          <div className="contact-map-card">
+            <h3>Our Location</h3>
+            <iframe
+              title="Mannati Infratech Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115132.86107233!2d85.07300220677843!3d25.60817557053523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ed5842f0334747%3A0x808535086b97b003!2sPatna%2C%20Bihar!5e0!3m2!1sen!2sin!4v1700000000000"
+              loading="lazy"
+            ></iframe>
+          </div>
+          
         </div>
       </section>
 
       <Footer />
-
-      {/* 🤖 CHATBOT (CONTACT PAGE ONLY) */}
       <Chatbot />
     </>
   );

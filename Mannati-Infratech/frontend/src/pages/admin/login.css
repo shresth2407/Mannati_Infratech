@@ -318,3 +318,22 @@
   font-size: 13px;
   margin-bottom: 12px;
 }
+
+/* BACK TO WEBSITE LINK */
+.back-to-site {
+  margin-top: 16px;
+}
+
+.back-to-site a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f3c88;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.25s ease;
+}
+
+.back-to-site a:hover {
+  transform: translateX(-4px);
+  text-decoration: underline;
+}

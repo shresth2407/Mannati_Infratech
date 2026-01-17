@@ -1,0 +1,300 @@
+/* ============================================================
+   EVENTS & GALLERY PAGE STYLES
+   ============================================================ */
+
+/* 1. EVENTS HERO SECTION */
+.events-hero {
+  position: relative;
+  padding: 90px 8% 70px;
+  background: url("https://www.pinsentmasons.com/-/media/images/special-reports/infratech/infratech-1440.jpg?h=583&w=1200&hash=F6D78B7A0848E66974603918081DB254");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Dark Overlay for Text Clarity */
+.events-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(2, 6, 23, 0.55), rgba(2, 6, 23, 0.65));
+  z-index: 0;
+}
+
+.events-hero h1,
+.events-hero p {
+  position: relative;
+  z-index: 1;
+}
+
+.events-hero h1 {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+.events-hero p {
+  max-width: 680px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e5e7eb;
+  margin: 0 auto;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* 2. GALLERY SECTION & GRID */
+.events-gallery {
+  position: relative;
+  padding: 80px 8%;
+  background: #f4f7fb;
+  overflow: hidden;
+}
+
+/* Blueprint/Infrastructure Grid Effect */
+.events-gallery::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(30, 64, 175, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 64, 175, 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  z-index: 0;
+}
+
+.events-gallery > * {
+  position: relative;
+  z-index: 1;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+/* 3. PREMIUM GALLERY CARDS */
+.gallery-card.premium {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(30, 64, 175, 0.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 30px 70px rgba(30, 64, 175, 0.12);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.gallery-card.premium:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.14), 0 45px 100px rgba(30, 64, 175, 0.22);
+}
+
+.gallery-card.premium img,
+.gallery-card.premium video {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.gallery-card.premium:hover img {
+  transform: scale(1.12);
+}
+
+/* Overlay Effect */
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.65));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.gallery-card.premium:hover .gallery-overlay {
+  opacity: 1;
+}
+
+.gallery-overlay span {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 10px 26px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 4. COMPACT EVENT CARDS (COLORFUL) */
+.event-card-compact.colorful {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card-compact.colorful::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #22c55e);
+}
+
+.event-info {
+  padding: 14px 14px 16px;
+}
+
+.event-info h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 6px;
+}
+
+.event-meta-text {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* 5. VIDEO COMPONENTS */
+.video-thumb {
+  position: relative;
+  background: #000;
+}
+
+.play-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.video-download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+  z-index: 10;
+}
+
+/* 6. FOLDERS & FILTERS */
+.gallery-folder {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.folder-title {
+  padding: 14px;
+  text-align: center;
+  font-weight: 600;
+  background: #f8fafc;
+}
+
+.event-filters {
+  display: flex;
+  gap: 16px;
+  padding: 30px 8%;
+}
+
+.event-filters select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+/* 7. MEDIA MODAL */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 20, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.image-modal img {
+  max-width: 88%;
+  max-height: 72vh;
+  border-radius: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+
+.close-btn {
+  position: absolute;
+  top: 25px;
+  right: 35px;
+  font-size: 34px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.download-btn {
+  margin-top: 25px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #000;
+  background: linear-gradient(135deg, #ffd89b, #fcb69f);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  border: none;
+}
+
+/* 8. RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .events-hero {
+    padding: 70px 6% 55px;
+  }
+
+  .events-hero h1 {
+    font-size: 32px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .gallery-card.premium img,
+  .gallery-card.premium video {
+    height: 220px;
+  }
+}
